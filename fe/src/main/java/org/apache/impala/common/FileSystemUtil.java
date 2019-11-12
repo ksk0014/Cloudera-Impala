@@ -309,7 +309,21 @@ public class FileSystemUtil {
     // Blacklist FileSystems that are known to not to include storage UUIDs.
     return !(fs instanceof S3AFileSystem || fs instanceof LocalFileSystem ||
         fs instanceof AzureBlobFileSystem || fs instanceof SecureAzureBlobFileSystem ||
-        fs instanceof AdlFileSystem);
+        fs instanceof AdlFileSystem || fs instanceof com.alibaba.dfs.DistributedFileSystem);
+  }
+
+  /**
+   * Returns true iff the filesystem is a DFSFileSystem.
+   */
+  public static boolean isDFSFileSystem(FileSystem fs) {
+    return fs instanceof com.alibaba.dfs.DistributedFileSystem;
+  }
+
+  /**
+   * Returns true iff the path is on a DFSFileSystem.
+   */
+  public static boolean isDFSFileSystem(Path path) throws IOException {
+    return isDFSFileSystem(path.getFileSystem(CONF));
   }
 
   /**
@@ -489,7 +503,8 @@ public class FileSystemUtil {
         FileSystemUtil.isLocalFileSystem(path) ||
         FileSystemUtil.isS3AFileSystem(path) ||
         FileSystemUtil.isABFSFileSystem(path) ||
-        FileSystemUtil.isADLFileSystem(path));
+        FileSystemUtil.isADLFileSystem(path) ||
+        FileSystemUtil.isDFSFileSystem(path));
   }
 
   /**
